@@ -4,160 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bertys Builder</title>
-
-<style>
-:root{
---viola:#5E35B1;
---azzurro:#42A5F5;
---bg:#F4F6FD;
---card:#FFFFFF;
---border:#E2E6F2;
-}
-
-*{box-sizing:border-box;font-family:Segoe UI,sans-serif}
-
-body{
-margin:0;
-background:var(--bg);
-padding:30px 15px 60px;
-}
-
-.wrapper{
-max-width:1000px;
-margin:auto;
-display:flex;
-flex-direction:column;
-gap:40px;
-}
-
-h1{
-text-align:center;
-color:var(--viola);
-font-size:34px;
-margin-bottom:5px;
-}
-
-.subtitle{
-text-align:center;
-color:#7E57C2;
-font-style:italic;
-margin-bottom:20px;
-}
-
-.card{
-background:var(--card);
-padding:25px;
-border-radius:22px;
-border:1px solid var(--border);
-box-shadow:0 20px 50px rgba(0,0,0,.05);
-display:flex;
-flex-direction:column;
-gap:20px;
-}
-
-input,select{
-padding:10px 14px;
-border-radius:14px;
-border:1px solid var(--border);
-font-size:14px;
-width:100%;
-}
-
-.grid-2{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:15px;
-}
-
-.sprite{
-text-align:center;
-}
-
-.sprite img{
-width:150px;
-image-rendering:pixelated;
-}
-
-/* NATURE PILL */
-.nature-pill{
-border:1.5px solid var(--viola);
-background:rgba(94,53,177,.08);
-border-radius:16px;
-padding:10px 14px;
-text-align:center;
-}
-
-.nature-name{
-font-weight:700;
-color:var(--viola);
-font-size:15px;
-}
-
-.stat-up{
-color:var(--viola);
-font-weight:600;
-font-size:13px;
-}
-
-.stat-down{
-color:var(--azzurro);
-font-weight:600;
-font-size:13px;
-}
-
-/* MOVES */
-.moves{
-display:grid;
-gap:10px;
-}
-
-.move{
-display:flex;
-gap:10px;
-}
-
-.move input{
-flex:1;
-}
-
-.move-info{
-font-size:12px;
-opacity:.7;
-}
-
-/* TEAM */
-.team{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:12px;
-margin-top:30px;
-}
-
-.team-slot{
-border:1px solid var(--border);
-border-radius:16px;
-padding:10px;
-text-align:center;
-min-height:120px;
-}
-
-.team-slot img{
-width:70px;
-image-rendering:pixelated;
-}
-
-button{
-padding:10px;
-border:none;
-border-radius:14px;
-background:var(--viola);
-color:white;
-font-weight:600;
-cursor:pointer;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <div class="wrapper">
@@ -167,52 +15,33 @@ cursor:pointer;
 
 <div class="card">
 
-<input id="pokemonName" placeholder="Nome Pokémon (es: garchomp)">
+<input id="pokemonInput" placeholder="Cerca Pokémon..." autocomplete="off">
+<div id="pokemonSuggestions" class="suggestions"></div>
 
 <div class="sprite">
-<img id="sprite">
+  <img id="sprite">
 </div>
 
-<div class="grid-2">
-<select id="ability"></select>
+<select id="abilitySelect"></select>
+<select id="itemSelect"></select>
 
-<select id="item">
-<option>Focus Sash</option>
-<option>Choice Band</option>
-<option>Choice Specs</option>
-<option>Life Orb</option>
-<option>Mystic Water</option>
-<option>Charcoal</option>
-<option>Miracle Seed</option>
-<option>Baccastagna</option>
-<option>Baccacedro</option>
-</select>
-</div>
+<input type="number" id="level" value="100" min="1" max="100">
 
-<select id="natureSelect">
-<option value="Adamant|Atk|SpA">Adamant</option>
-<option value="Modest|SpA|Atk">Modest</option>
-<option value="Jolly|Speed|SpA">Jolly</option>
-<option value="Timid|Speed|Atk">Timid</option>
-<option value="Relaxed|Def|Speed">Relaxed</option>
-<option value="Bold|Def|Atk">Bold</option>
-<option value="Calm|SpD|Atk">Calm</option>
-</select>
+<select id="natureSelect"></select>
+<div id="naturePill" class="nature-pill"></div>
 
-<div class="nature-pill" id="naturePill">
-<div class="nature-name">Adamant</div>
-<div class="stat-up">+Atk</div>
-<div class="stat-down">-SpA</div>
-</div>
+<div class="ev-grid" id="evGrid"></div>
+<div id="evTotal">Totale EV: 0 / 510</div>
 
-<div class="moves">
-<div class="move"><input placeholder="Mossa 1" class="move-input"><div class="move-info"></div></div>
-<div class="move"><input placeholder="Mossa 2" class="move-input"><div class="move-info"></div></div>
-<div class="move"><input placeholder="Mossa 3" class="move-input"><div class="move-info"></div></div>
-<div class="move"><input placeholder="Mossa 4" class="move-input"><div class="move-info"></div></div>
-</div>
+<hr>
 
-<button onclick="saveToTeam()">Salva nel Team</button>
+<div class="stats" id="finalStats"></div>
+
+<hr>
+
+<div class="moves" id="movesContainer"></div>
+
+<button id="saveBtn">Salva nel Team</button>
 
 </div>
 
@@ -220,95 +49,6 @@ cursor:pointer;
 
 </div>
 
-<script>
-
-const abilitySelect=document.getElementById("ability");
-const sprite=document.getElementById("sprite");
-const pokemonInput=document.getElementById("pokemonName");
-
-pokemonInput.addEventListener("change", async function(){
-let name=this.value.toLowerCase();
-try{
-let res=await fetch("https://pokeapi.co/api/v2/pokemon/"+name);
-let data=await res.json();
-
-sprite.src=data.sprites.front_default;
-
-abilitySelect.innerHTML="";
-data.abilities.forEach(a=>{
-let opt=document.createElement("option");
-opt.textContent=a.ability.name;
-abilitySelect.appendChild(opt);
-});
-}catch{
-sprite.src="";
-abilitySelect.innerHTML="<option>---</option>";
-}
-});
-
-document.querySelectorAll(".move-input").forEach(input=>{
-input.addEventListener("change", async function(){
-let move=this.value.toLowerCase().replace(" ","-");
-let info=this.parentElement.querySelector(".move-info");
-try{
-let r=await fetch("https://pokeapi.co/api/v2/move/"+move);
-let d=await r.json();
-info.innerHTML="Pow: "+(d.power||"-")+" | Acc: "+(d.accuracy||"-");
-}catch{
-info.innerHTML="";
-}
-});
-});
-
-const natureSelect=document.getElementById("natureSelect");
-const naturePill=document.getElementById("naturePill");
-
-natureSelect.addEventListener("change",function(){
-let p=this.value.split("|");
-naturePill.innerHTML=`
-<div class="nature-name">${p[0]}</div>
-<div class="stat-up">+${p[1]}</div>
-<div class="stat-down">-${p[2]}</div>
-`;
-});
-
-let teamData=new Array(6).fill(null);
-
-function saveToTeam(){
-let idx=teamData.findIndex(x=>x===null);
-if(idx===-1)return;
-
-teamData[idx]={
-name:pokemonInput.value,
-sprite:sprite.src,
-nature:natureSelect.value.split("|")[0],
-item:item.value
-};
-
-renderTeam();
-}
-
-function renderTeam(){
-teamGrid.innerHTML="";
-teamData.forEach(s=>{
-let div=document.createElement("div");
-div.className="team-slot";
-if(s){
-div.innerHTML=`
-<img src="${s.sprite}">
-<div><strong>${s.name}</strong></div>
-<div style="font-size:12px">${s.nature}</div>
-<div style="font-size:12px">${s.item}</div>
-`;
-}else{
-div.innerHTML="<div style='opacity:.4'>Slot Vuoto</div>";
-}
-teamGrid.appendChild(div);
-});
-}
-
-renderTeam();
-</script>
-
+<script src="script.js"></script>
 </body>
-  </html>
+</html>
