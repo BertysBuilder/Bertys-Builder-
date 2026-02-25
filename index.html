@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bertys Builder</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrapper">
+
+<h1>Bertys Builder</h1>
+<div class="subtitle">è una questione di Step</div>
+
+<div class="card">
+
+<input id="pokemonInput" placeholder="Cerca Pokémon..." autocomplete="off">
+<div id="pokemonSuggestions" class="suggestions"></div>
+
+<div class="sprite">
+  <img id="sprite">
+</div>
+
+<select id="abilitySelect"></select>
+<select id="itemSelect"></select>
+
+<input type="number" id="level" value="100" min="1" max="100">
+
+<select id="natureSelect"></select>
+<div id="naturePill" class="nature-pill"></div>
+
+<div class="ev-grid" id="evGrid"></div>
+<div id="evTotal">Totale EV: 0 / 510</div>
+
+<hr>
+
+<div class="stats" id="finalStats"></div>
+
+<hr>
+
+<div class="moves" id="movesContainer"></div>
+
+<button id="saveBtn">Salva nel Team</button>
+
+</div>
+
+<div class="team" id="teamGrid"></div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
