@@ -1,0 +1,16 @@
+{
+  "name": "Bertys Builder",
+  "short_name": "Bertys",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#5E35B1",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/BertysBuilder/Bertys-Builder-/main/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
